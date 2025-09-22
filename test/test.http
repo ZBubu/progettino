@@ -1,0 +1,71 @@
+#Test possono venir eseguiti anche con programmi come postman
+@hostname = localhost
+@port = 5000
+@host = {{hostname}}:{{port}}
+### form get
+GET http://{{host}}/form HTTP/1.1
+### form post
+POST http://{{host}}/form HTTP/1.1
+### hello get 
+GET http://{{host}}/hello HTTP/1.1
+### hello user get
+GET http://{{host}}/hello/geo HTTP/1.1
+### api invert
+GET http://{{host}}/api/invert/palindromo HTTP/1.1
+
+### api upper
+GET http://{{host}}/api/upper/miao HTTP/1.1
+### api save
+POST http://{{host}}/api/save HTTP/1.1
+Content-Type: application/json
+
+{
+    "dati_da_salvare" : "prova con questo"
+}
+### api adduser
+POST http://{{host}}/api/adduser HTTP/1.1
+Content-Type: application/json
+
+{
+    "id" : 22,
+    "username" : "bubu",
+    "email" : "bubu@prova.com",
+    "password" : "mysecretpassword"
+}
+
+### get all users
+GET http://{{host}}/users HTTP/1.1
+
+### get user by id
+GET http://{{host}}/users/4 HTTP/1.1
+
+### get user by username
+GET http://{{host}}/users/prova HTTP/1.1
+
+### update user by id
+PUT http://{{host}}/users/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id" : 1,
+    "username":"noyznarcos"
+}
+### update user by username
+PUT http://{{host}}/users/noyznarcos HTTP/1.1
+Content-Type: application/json
+
+{
+    "id" : 1,
+    "username":"niemand"
+}
+### delete user by username
+DELETE http://{{host}}/users/1 HTTP/1.1
+
+### add umore linked to user
+POST http://{{host}}/users/2/addUmore HTTP/1.1
+Content-Type: application/json
+
+{
+    "stato": "pp"
+}
+
