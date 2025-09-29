@@ -28,31 +28,6 @@ class User(UserMixin, db.Model):
                 'email':self.email,
                 'id':self.id}
         return data
+
     
-class Umore(db.Model):
-    id = db.Column(db.Integer, primary_key= True)
-    stato = db.Column(db.String(80), nullable=False)
-    #in alternativa si possono salvare i timestamp come linux timestamp
-    timestamp = db.Column(db.DateTime, default = datetime.datetime.now())
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    @property
-    def umori(self):
-        #ritorna la lista degli umori associati all'utente
-        # stmt = db.select(Umore).filter_by(user_id=self.id)
-        # umori = db.session.execute(stmt).scalars().all()
-        return [umore.to_dict() for umore in self.umore]
-
-    user = db.relationship('User', backref=db.backref('Umore', lazy=True))
-
-    def __repr__(self):
-        return f'<Umore id:{self.id} stato:{self.stato}>'
-    
-    def to_dict(self):
-        #timestamp dev'essere convertito in stringa sennò il json si arrabbia :(
-        data = {
-            'id' : self.id,
-            'stato':self.stato,
-            'timestamp':self.timestamp
-        }
-        return data

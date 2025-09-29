@@ -22,14 +22,15 @@
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{url_for('default.home')}}">Home</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{url_for('default.hello_guest')}}">Hello</a>
-        </li>
 
         {% if not current_user.is_authenticated %}
         <li class="nav-item">
             <a class="nav-link" href="{{url_for('auth.login')}}">Login</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('auth.signup')}}">Signup</a>
+        </li>
+
         {% endif %}
 
         {% if current_user.is_authenticated %}

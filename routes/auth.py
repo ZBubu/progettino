@@ -16,10 +16,6 @@ from models.model import *
 app = Blueprint('auth', __name__) 
 @app.route('/login')
 def login():
-    # shows the login form page
-#    if current_user:
-#        flash("User already authenticated")
-#        return redirect(url_for('auth.profile'))
     return render_template('auth/login.html')
 
 @app.route('/login', methods=['POST'])
@@ -55,3 +51,22 @@ def logout():
 @login_required
 def profile():
     return render_template('auth/profile.html', name=current_user.username)
+
+@app.route('/signup', methods=['GET'])
+def signup():
+    return render_template('auth/signup.html')
+
+@app.route('/signup', methods=['POST'])
+def signup_post():
+    username = request.form.get('username')
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    #current_app.logger.info(f'Username: {username}, email: {email}, password: {password}')
+
+    user = User(username=username, email=email)
+    user.set_password(password)  # Imposta la password criptata
+    db.session.add(user)  # equivalente a INSERT
+    db.session.commit()
+    flash('User created, please login')
+    return render_template('auth/login.html')

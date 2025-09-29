@@ -11,8 +11,6 @@ from flask_login import LoginManager
 from models.connection import db
 from models.model import User
 
-
-
 app = Flask(__name__)
 
 app.register_blueprint(bp_default)
@@ -21,6 +19,15 @@ app.register_blueprint(bp_auth, url_prefix='/auth')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI',"sqlite:///labo1.db")
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY',"grandepanepanegrande1212121212121212")
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER',"uploads/")
+app.config['ALLOWED_EXTENSIONS'] = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000 # 16 MB max file size
+
+current_path = os.getenv('PATH')
+tesseract_path = os.getenv('TESSERACT',r"E:\1Goku\Programmi\tesseract-3.02.02")
+
+if tesseract_path not in current_path:
+    os.environ["PATH"] = current_path + ";" + tesseract_path
 db.init_app(app)
 migrate = Migrate(app, db)
 
