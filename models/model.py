@@ -29,5 +29,6 @@ class User(UserMixin, db.Model):
                 'id':self.id}
         return data
 
+
     
 

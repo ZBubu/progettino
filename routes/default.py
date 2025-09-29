@@ -22,12 +22,12 @@ def home():
     return render_template('base.html')
 
 @app.route('/upload', methods=['GET'])
-def upload_file():
+def upload():
     return render_template('upload.html')
 
 
 @app.route('/upload', methods=['POST'])
-def upload_file_post():
+def upload_post():
     # https://flask.palletsprojects.com/en/stable/patterns/fileuploads/
     # check if the post request has the file part
     if 'file' not in request.files:
