@@ -1,4 +1,7 @@
 import os
+import time
+from datetime import datetime
+from werkzeug.utils import secure_filename
 from flask import Blueprint
 from flask import render_template
 from flask import jsonify
@@ -7,14 +10,17 @@ from flask import flash
 from flask import redirect
 from flask import url_for
 from flask import current_app
-from werkzeug.utils import secure_filename
+from flask_login import login_required, current_user
+
 from PIL import Image
 import pytesseract
 
 from models.connection import db
-from models.model import User
+from models.model import User, Result
+        
 
 app = Blueprint('default', __name__) 
+ts = time.time()
 
 
 @app.route('/')
@@ -25,7 +31,7 @@ def home():
 def upload():
     return render_template('upload.html')
 
-
+@login_required
 @app.route('/upload', methods=['POST'])
 def upload_post():
     # https://flask.palletsprojects.com/en/stable/patterns/fileuploads/
@@ -50,10 +56,67 @@ def upload_post():
         else:
             flash('Directory not found')
             return "Directory not found"
-        print(pytesseract.image_to_string(Image.open(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))))
-        #TODO: salvare nel database il risultato di tesseract
-        #  cancellare l'immagine caricata dall'utente
-        # risolvere l'espressione e salvarla db
+        #OCR non sembra funzionare bene con le espressioni matematiche
+        #https://muthu.co/all-tesseract-ocr-options/
+        imageOCR= pytesseract.image_to_string(
+            Image.open(
+                os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+                , config='textord_equation_detect=1 -c tessedit_char_whitelist=0123456789+-*/')
+        flash('OCR result: '+imageOCR)
+        os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+        if(imageOCR.count('+')>0 or imageOCR.count('-')>0 and (imageOCR.count('*')==0 and imageOCR.count('/')==0)):
+            flash('Expression detected: '+imageOCR)
+            if(imageOCR.count('+')>0):
+                operands=imageOCR.split('+')
+                try:
+                    result=int(operands[0].strip())+int(operands[1].strip())
+                    r = Result(user_id=current_user.get_id(),
+                       expression=imageOCR,
+                       result=str(result),
+                       timestamp=datetime.now())
+                    db.session.add(r)  # equivalente a INSERT
+                    db.session.commit()
+                except Exception as e:
+                    flash('Error in expression')
+            elif(imageOCR.count('-')>0 or imageOCR.count('−')>0):
+                operands=imageOCR.split('-')
+                try:
+                    result=int(operands[0].strip())-int(operands[1].strip())
+                    r = Result(user_id=current_user.get_id(),
+                       expression=imageOCR,
+                       result=str(result),
+                       timestamp=datetime.now())
+                    db.session.add(r)  # equivalente a INSERT
+                    db.session.commit()
+                except Exception as e:
+                    flash('Error in expression')
+            flash('Result successfully saved')
+        else:
+            if(imageOCR.count('*')>0):
+                operands=imageOCR.split('*')
+                try:
+                    result=int(operands[0].strip())*int(operands[1].strip())
+                    r = Result(user_id=current_user.get_id(),
+                       expression=imageOCR,
+                       result=str(result),
+                       timestamp=datetime.now())
+                    db.session.add(r)  # equivalente a INSERT
+                    db.session.commit()
+                except Exception as e:
+                    flash('Error in expression')
+            if(imageOCR.count('/')>0):
+                operands=imageOCR.split('/')
+                try:
+                    result=int(operands[0].strip())/int(operands[1].strip())
+                    r = Result(user_id=current_user.get_id(),
+                       expression=imageOCR,
+                       result=str(result),
+                       timestamp=datetime.now())
+                    db.session.add(r)  # equivalente a INSERT
+                    db.session.commit()
+                except Exception as e:
+                    flash('Error in expression')
+            #flash('moltiplication and division are not supported')
         return redirect(url_for('default.home'))
 
 

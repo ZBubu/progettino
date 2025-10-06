@@ -28,6 +28,7 @@ tesseract_path = os.getenv('TESSERACT',r"E:\1Goku\Programmi\tesseract-3.02.02")
 
 if tesseract_path not in current_path:
     os.environ["PATH"] = current_path + ";" + tesseract_path
+
 db.init_app(app)
 migrate = Migrate(app, db)
 

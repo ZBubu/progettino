@@ -50,7 +50,8 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('auth/profile.html', name=current_user.username)
+    risultati=current_user.results
+    return render_template('auth/profile.html', name=current_user.username, results=risultati)
 
 @app.route('/signup', methods=['GET'])
 def signup():
@@ -70,3 +71,14 @@ def signup_post():
     db.session.commit()
     flash('User created, please login')
     return render_template('auth/login.html')
+
+@login_required
+@app.route('/admin')
+def admin_page():
+    #TODO: testare ruoli e protezione endpoint admin
+    # if current_user.is_authenticated and not current_user.has_role('admin'):
+    #     flash("Accesso non autorizzato!")
+    #     return redirect(url_for('default.home'))
+    users = db.session.execute(db.select(User)).scalars().all()
+    results = db.session.execute(db.select(Result)).scalars().all()
+    return render_template('admin.html', users=users,results=results)
