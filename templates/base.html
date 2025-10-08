@@ -40,12 +40,18 @@
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{url_for('default.upload')}}">Upload</a>
         </li>
+        {% if current_user.has_role('admin') %}
+        <li class="nav-item">
+            <a class="nav-link active" href="{{url_for('auth.admin_page')}}">Admin</a>
+        </li>
+        {% endif %}
         <li class="nav-item">
             <a class="nav-link" href="{{url_for('auth.logout')}}">Logout</a>
         </li>
-
         </ul>
         {% endif %}
+
+
 
     </div>
     </div>

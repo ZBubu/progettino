@@ -9,6 +9,7 @@ from routes.api import app as bp_api
 from routes.auth import app as bp_auth
 from flask_login import LoginManager
 from models.connection import db
+from models.model import init_db
 from models.model import User
 
 app = Flask(__name__)
@@ -30,6 +31,8 @@ if tesseract_path not in current_path:
     os.environ["PATH"] = current_path + ";" + tesseract_path
 
 db.init_app(app)
+with app.app_context():
+    init_db()
 migrate = Migrate(app, db)
 
 # blocco di inizializzazione del login manager

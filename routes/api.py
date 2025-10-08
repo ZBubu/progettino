@@ -13,14 +13,6 @@ from models.model import User, Result
 app = Blueprint('api', __name__) 
 
 
-# @app.route('/invert/<string>')
-# def invert(string):
-#     response = {
-#         'original_string':string,
-#         'inverted':string[::-1] 
-#     }
-#     return jsonify(response), 200
-
 @app.route('/users', methods=['GET'])
 def getAllUsers():
     users = db.session.execute(db.select(User)).scalars().all()
