@@ -1,4 +1,5 @@
 Per far funzionare il programma è necessario scaricare tesseract
+
 utente di prova: admin@example.com adminpassword
 ## .env
 - SQLALCHEMY_DATABASE_URI: indirizzo del database
